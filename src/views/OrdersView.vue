@@ -13,7 +13,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import NewOrder from '../components/NewOrder.vue'
+import NewOrder from '../components/orders/NewOrder.vue'
 import OrderList from '../components/orders/OrderList.vue'
 import OrderModal from '../components/orders/OrderModal.vue'
 // import { RefreshCcw } from 'lucide-vue-next'

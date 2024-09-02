@@ -9,11 +9,19 @@
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center">
           <button
-            v-if="!isHome"
+            v-if="!isHome && !backToLastPage"
             @click="goHome"
             class="mr-2 p-1 rounded-md text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             <HomeIcon class="h-6 w-6" />
+          </button>
+          <button
+            v-if="backToLastPage"
+            @click="goBack"
+            class="mr-2 p-1 rounded-md text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            v-bind:disabled="!backToLastPage"
+          >
+            <ArrowLeftIcon class="h-6 w-6" />
           </button>
           <span class="text-xl font-semibold text-gray-900">{{ title }}</span>
         </div>
@@ -42,12 +50,12 @@
     <!-- Mobile menu -->
     <div v-if="isMobileMenuOpen" class="md:hidden">
       <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-        <a
+        <router-link
           v-for="item in menuItems"
           :key="item.name"
-          :href="item.href"
+          :to="item.href"
           :class="[
-            item.current
+            currentRoute === item.id
               ? 'bg-gray-100 text-gray-900'
               : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
             'block px-3 py-2 rounded-md text-base font-medium'
@@ -55,7 +63,7 @@
           @click="closeMenu"
         >
           {{ item.name }}
-        </a>
+        </router-link>
       </div>
       <div class="pt-4 pb-3 border-t border-gray-200">
         <div class="flex items-center px-5">
@@ -114,7 +122,7 @@
             :key="item.name"
             :href="item.href"
             :class="[
-              item.current
+              route.name === item.id
                 ? 'bg-gray-100 text-gray-900'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
               'block px-3 py-2 rounded-md text-base font-medium'
@@ -154,33 +162,39 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MenuIcon, XIcon, UserIcon, HomeIcon } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
+import { MenuIcon, XIcon, UserIcon, HomeIcon, ArrowLeftIcon } from 'lucide-vue-next'
+import { useRouter, useRoute } from 'vue-router'
+import { watch } from 'vue'
 
 interface Props {
   title: string
   isHome: boolean
+  backToLastPage: boolean
 }
 
 defineProps<Props>()
 
 const router = useRouter()
+const route = useRoute()
 
 const isLoggedIn = ref(true) // Replace with your authentication logic
 const user = ref({
   name: 'John Doe',
   email: 'john@example.com'
 })
-
 const menuItems = ref([
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false }
+  { id: 'home', name: 'Home', href: '/' },
+  { id: 'orders', name: 'Orders', href: '/orders' },
+  { id: 'order-items', name: 'Order Items', href: '/order-items' }
 ])
+const currentRoute = ref(route.name)
 
 const isMobileMenuOpen = ref(false)
 const isUserMenuOpen = ref(false)
+
+watch(route, (to) => {
+  currentRoute.value = to.name
+})
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
@@ -200,6 +214,11 @@ const closeMenu = () => {
 const goHome = () => {
   // Implement your navigation logic here
   router.push('/')
+  closeMenu()
+}
+
+const goBack = () => {
+  router.go(-1)
   closeMenu()
 }
 

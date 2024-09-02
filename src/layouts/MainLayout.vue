@@ -1,6 +1,6 @@
 <template>
   <div class="main-layout">
-    <NavigationBar :title="navigationTitle" :isHome="isHome" />
+    <NavigationBar :title="navigationTitle" :isHome="isHome" :backToLastPage="backToLastPage" />
     <div class="h-[calc(100vh-64px)]">
       <slot />
     </div>
@@ -22,10 +22,12 @@ import navigationTitles from '../utils/navigationTitleList'
 const route = useRoute()
 
 const isHome = ref<boolean>(true)
-const navigationTitle = ref<string>(navigationTitles.home)
+const navigationTitle = ref<string>(navigationTitles.home.title)
+const backToLastPage = ref<boolean>(false)
 
 watch(route, (to) => {
   isHome.value = to.path === '/'
-  navigationTitle.value = navigationTitles[to.name as keyof typeof navigationTitles]
+  navigationTitle.value = navigationTitles[to.name as keyof typeof navigationTitles].title
+  backToLastPage.value = navigationTitles[to.name as keyof typeof navigationTitles].backToLastPage
 })
 </script>

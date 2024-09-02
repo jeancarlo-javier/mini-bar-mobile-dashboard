@@ -1,10 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { isAuthenticated } from './utils/auth'
-import {
-  NavigationGuardNext,
-  RouteLocationNormalizedLoadedGeneric,
-  RouteLocationNormalizedGeneric
-} from 'vue-router'
+import { NavigationGuardNext, RouteLocationNormalizedLoadedGeneric, RouteLocationNormalizedGeneric } from 'vue-router'
 
 const redirectIfNotAuthenticated = (
   to: RouteLocationNormalizedLoadedGeneric,
@@ -24,10 +20,14 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
+      component: () => import('./views/HomeView.vue'),
+      beforeEnter: redirectIfNotAuthenticated
+    },
+    {
+      path: '/orders',
+      name: 'orders',
       component: () => import('./views/OrdersView.vue'),
-      beforeEnter: (to, from, next) => {
-        redirectIfNotAuthenticated(to, from, next)
-      }
+      beforeEnter: redirectIfNotAuthenticated
     },
     {
       path: '/login',
