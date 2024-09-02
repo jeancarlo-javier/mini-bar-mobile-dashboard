@@ -1,5 +1,6 @@
 <template>
   <nav
+    v-if="isLoggedIn"
     :class="{
       'h-full': isMobileMenuOpen,
       'bg-white border-b border-gray-200 fixed top-0 z-10 w-full': true
@@ -165,6 +166,7 @@ import { ref } from 'vue'
 import { MenuIcon, XIcon, UserIcon, HomeIcon, ArrowLeftIcon } from 'lucide-vue-next'
 import { useRouter, useRoute } from 'vue-router'
 import { watch } from 'vue'
+import { useAuth } from '../composables/auth'
 
 interface Props {
   title: string
@@ -177,7 +179,8 @@ defineProps<Props>()
 const router = useRouter()
 const route = useRoute()
 
-const isLoggedIn = ref(true) // Replace with your authentication logic
+const { isLoggedIn, logout } = useAuth()
+
 const user = ref({
   name: 'John Doe',
   email: 'john@example.com'
@@ -224,8 +227,8 @@ const goBack = () => {
 
 const handleLogout = () => {
   // Implement your logout logic here
-  console.log(isLoggedIn.value ? 'Logging out' : 'Logging in')
   isLoggedIn.value = !isLoggedIn.value
+  logout()
   closeMenu()
 }
 </script>

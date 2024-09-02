@@ -1,7 +1,7 @@
 <template>
-  <div class="main-layout">
+  <div :class="{ 'pt-[64px]': isLoggedIn }" class="main-layout">
     <NavigationBar :title="navigationTitle" :isHome="isHome" :backToLastPage="backToLastPage" />
-    <div class="h-[calc(100vh-64px)]">
+    <div :class="{ 'h-[calc(100vh-64px)]': isLoggedIn }">
       <slot />
     </div>
   </div>
@@ -9,7 +9,6 @@
 
 <style>
 .main-layout {
-  padding-top: 64px;
 }
 </style>
 
@@ -18,8 +17,10 @@ import { ref, watch } from 'vue'
 import NavigationBar from '../components/NavigationBar.vue'
 import { useRoute } from 'vue-router'
 import navigationTitles from '../utils/navigationTitleList'
+import { useAuth } from '../composables/auth'
 
 const route = useRoute()
+const { isLoggedIn } = useAuth()
 
 const isHome = ref<boolean>(true)
 const navigationTitle = ref<string>(navigationTitles.home.title)
