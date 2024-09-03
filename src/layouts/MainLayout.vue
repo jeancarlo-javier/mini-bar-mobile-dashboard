@@ -1,15 +1,15 @@
 <template>
-  <div :class="{ 'pt-[64px]': isLoggedIn }" class="main-layout">
+  <div :class="{ 'pt-[64px] pb-[64px]': isLoggedIn }" class="main-layout">
     <NavigationBar :title="navigationTitle" :isHome="isHome" :backToLastPage="backToLastPage" />
-    <div :class="{ 'h-[calc(100vh-64px)]': isLoggedIn }">
+    <div :class="{}">
       <slot />
     </div>
   </div>
 </template>
 
 <style>
-.main-layout {
-}
+/* .main-layout {
+} */
 </style>
 
 <script setup lang="ts">
@@ -30,5 +30,7 @@ watch(route, (to) => {
   isHome.value = to.path === '/'
   navigationTitle.value = navigationTitles[to.name as keyof typeof navigationTitles].title
   backToLastPage.value = navigationTitles[to.name as keyof typeof navigationTitles].backToLastPage
+
+  window.scrollTo(0, 0)
 })
 </script>

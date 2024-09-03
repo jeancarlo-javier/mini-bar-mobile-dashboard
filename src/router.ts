@@ -24,12 +24,6 @@ const router = createRouter({
       beforeEnter: redirectIfNotAuthenticated
     },
     {
-      path: '/orders',
-      name: 'orders',
-      component: () => import('./views/OrdersView.vue'),
-      beforeEnter: redirectIfNotAuthenticated
-    },
-    {
       path: '/login',
       name: 'login',
       component: () => import('./views/LoginView.vue'),
@@ -40,6 +34,18 @@ const router = createRouter({
           next()
         }
       }
+    },
+    {
+      path: '/orders',
+      name: 'orders',
+      component: () => import('./views/OrdersView.vue'),
+      beforeEnter: redirectIfNotAuthenticated
+    },
+    {
+      path: '/order-items',
+      name: 'order-items',
+      component: () => import('./views/OrderItems.vue'),
+      beforeEnter: redirectIfNotAuthenticated
     },
     {
       path: '/orders/:orderId',

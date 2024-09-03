@@ -16,6 +16,10 @@ const navigationTitles: Record<string, NavigationTitle> = {
     title: 'Order Details',
     backToLastPage: true
   },
+  'order-items': {
+    title: 'Order Items',
+    backToLastPage: false
+  },
   orders: {
     title: 'Orders',
     backToLastPage: false
