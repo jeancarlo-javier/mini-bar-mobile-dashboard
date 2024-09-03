@@ -1,19 +1,14 @@
 <template>
   <div class="min-h-screen bg-gray-900 flex items-center justify-center p-4">
     <div class="w-full max-w-md">
-      <form
-        @submit.prevent="handleSubmit"
-        class="bg-gray-800 shadow-lg rounded-lg px-8 pt-8 pb-8 mb-4"
-      >
+      <form @submit.prevent="handleSubmit" class="bg-gray-800 shadow-lg rounded-lg px-8 pt-8 pb-8 mb-4">
         <div class="mb-6 text-center">
           <h1 class="text-2xl font-bold text-white mb-2">Welcome Back</h1>
           <p class="text-gray-400">Sign in to your account</p>
         </div>
 
         <div class="mb-4">
-          <label class="block text-gray-300 text-sm font-bold mb-2" for="email">
-            Email
-          </label>
+          <label class="block text-gray-300 text-sm font-bold mb-2" for="email"> Email </label>
           <div class="relative">
             <input
               v-model="email"
@@ -31,12 +26,7 @@
         </div>
 
         <div class="mb-6">
-          <label
-            class="block text-gray-300 text-sm font-bold mb-2"
-            for="password"
-          >
-            Password
-          </label>
+          <label class="block text-gray-300 text-sm font-bold mb-2" for="password"> Password </label>
           <div class="relative">
             <input
               v-model="password"
@@ -99,6 +89,7 @@ import { MailIcon, EyeIcon, EyeOffIcon } from 'lucide-vue-next'
 import { login } from '../api/auth'
 
 const email = ref('')
+console.log('🚀 ~ email:', email)
 const password = ref('')
 // const rememberMe = ref(true)
 const showPassword = ref(false)

@@ -4,40 +4,38 @@
     @click="goToDetails"
   >
     <div class="flex justify-between items-center mb-2">
-      <h2 class="text-lg font-semibold text-gray-800">{{ order.title }}</h2>
-      <span class="text-sm text-gray-600">Table {{ order.table }}</span>
+      <h2 class="text-lg font-semibold text-gray-800">{{ `Order #${order.id}` }}</h2>
+      <span class="text-sm text-gray-600">Table {{ order.tableNumber }}</span>
     </div>
 
     <div class="flex justify-between items-center mb-2">
-      <span class="text-sm text-gray-600">{{ order.user }}</span>
-      <span class="text-sm text-gray-600">{{ formatTime(order.time) }}</span>
+      <span class="text-sm text-gray-600">{{ order.user.name }}</span>
+      <span class="text-sm text-gray-600">{{ formatTime(order.orderTime) }}</span>
     </div>
 
     <div class="border-t border-gray-200 my-2"></div>
 
     <div class="flex justify-between items-center mb-2">
-      <span class="font-semibold text-gray-800"
-        >Total: ${{ order.total.toFixed(2) }}</span
-      >
+      <span class="font-semibold text-gray-800">Total: ${{ order.total.toFixed(2) }}</span>
     </div>
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 // import { defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
+import type { Order } from '../../types/orderTypes'
 
 // const emit = defineEmits(['view-details'])
 const router = useRouter()
 
-const { order } = defineProps({
-  order: {
-    type: Object,
-    required: true
-  }
-})
+interface Props {
+  order: Order
+}
 
-const formatTime = (time) => {
+const { order } = defineProps<Props>()
+
+const formatTime = (time: Date) => {
   return new Date(time).toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit'
