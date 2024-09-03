@@ -22,7 +22,6 @@
 </template>
 
 <script lang="ts" setup>
-// import { defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Order } from '../../types/orderTypes'
 

@@ -1,8 +1,19 @@
 <template>
   <div class="bg-gray-100 h-full p-4 sm:p-6 relative">
-    <OrderList :orders="orders" @edit-order="openOrderModal" @mark-as-paid="markAsPaid" />
+    <div class="mb-4">
+      <h2 class="text-xl font-bold mb-2 text-center">Active Orders</h2>
+      <OrderList :orders="activeOrders" @edit-order="openOrderModal" />
+    </div>
+    <div class="mb-4">
+      <h2 class="text-xl font-bold mb-2 text-center">Completed Orders</h2>
+      <OrderList :orders="completedOrders" @edit-order="openOrderModal" />
+    </div>
+    <div class="mb-4">
+      <h2 class="text-xl font-bold mb-2 text-center">Cancelled Orders</h2>
+      <OrderList :orders="cancelledOrders" @edit-order="openOrderModal" />
+    </div>
     <NewOrder @new-order="openOrderModal" />
-    <OrderModal v-if="showOrderModal" :editing-order="currentOrder" @close="closeOrderModal" @save="saveOrder" />
+    <OrderModal v-if="showOrderModal" @close="closeOrderModal" @save="saveOrder" />
   </div>
 </template>
 
@@ -11,49 +22,33 @@ import { ref, computed } from 'vue'
 import NewOrder from '../components/orders/NewOrder.vue'
 import OrderList from '../components/orders/OrderList.vue'
 import OrderModal from '../components/orders/OrderModal.vue'
-// import { useOrders } from '../composables/orders'
-import type { Order } from '../types/orderTypes'
+import type { OrderCreate } from '../types/orderTypes'
 import { useStore } from 'vuex'
 import { onMounted } from 'vue'
-// import { RefreshCcw } from 'lucide-vue-next'
 
 const store = useStore()
 
 const showOrderModal = ref<boolean>(false)
-const currentOrder = ref<Order | null>(null)
 
-const orders = computed(() => store.state.orders)
+// const orders = computed(() => store.state.orders)
+const activeOrders = computed(() => store.getters.ordersByStatus('pending'))
+const completedOrders = computed(() => store.getters.ordersByStatus('completed'))
+const cancelledOrders = computed(() => store.getters.ordersByStatus('cancelled'))
 
 onMounted(() => {
   store.dispatch('fetchOrders')
 })
 
-// watch(fetchedOrders, (newOrders) => {
-//   orders.value = newOrders
-// })
-
-const openOrderModal = (order: Order | null = null) => {
-  // currentOrder.value = order ? { ...order } : { user: '', tableNumber: null, status: 'pending', items: [] }
+const openOrderModal = (): void => {
   showOrderModal.value = true
 }
 
 const closeOrderModal = () => {
   showOrderModal.value = false
-  currentOrder.value = null
 }
 
-const saveOrder = (order) => {
-  // if (order.id) {
-  //   const index = orders.value.findIndex((o) => o.id === order.id)
-  //   orders.value[index] = { ...order }
-  // } else {
-  //   order.id = orders.value.length + 1
-  //   orders.value.push(order)
-  // }
+const saveOrder = (newOrder: OrderCreate) => {
+  store.dispatch('createOrder', newOrder)
   closeOrderModal()
-}
-
-const markAsPaid = (order: Order) => {
-  // order.paymentStatus = 'paid'
 }
 </script>

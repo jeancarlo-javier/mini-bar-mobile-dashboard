@@ -17,3 +17,7 @@ export interface OrderDb {
   table_number: number
   total: number
 }
+
+export interface OrderCreate {
+  table_number: number
+}
