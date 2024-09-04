@@ -22,7 +22,7 @@
           </button>
           <button
             type="submit"
-            class="bg-stone-600 text-white p-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+            class="bg-green-600 text-white p-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
           >
             Create Order
           </button>
@@ -40,7 +40,7 @@ import FormError from '../FormError.vue'
 
 const emit = defineEmits(['close', 'save'])
 
-const options = [1, 2, 3, 4, 5]
+const options = [1, 2, 3, 4, 5, 6]
 const selectedTableNumber = ref<number | null>(null)
 const editingOrder = ref<OrderCreate | null>(null)
 const errorMessage = ref<string | null>(null)

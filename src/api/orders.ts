@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { Order, OrderCreate, OrderDb, OrderItemType, OrderItemDb } from '../types/orderTypes'
+import type { Order, OrderCreate, OrderDb, OrderItemType, OrderItemDb } from '../types/orderTypes'
+import type { ProductItemDb } from '../types/productTypes'
 
 const formatOrder = (order: OrderDb): Order => {
   return {
@@ -93,7 +94,6 @@ export async function createOrder(order: OrderCreate): Promise<Order | void> {
 }
 
 export async function getOrderItems(orderId: number): Promise<OrderItemType[] | void> {
-  console.log('🚀 ~ getOrderItems ~ orderId:', orderId)
   const headers = {
     accept: 'application/json',
     Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -113,5 +113,25 @@ export async function getOrderItems(orderId: number): Promise<OrderItemType[] | 
     return formattedItems
   } catch (error) {
     console.error('Error fetching order items:', error)
+  }
+}
+
+export async function addItemsToOrder(orderId: number, items: Array<ProductItemDb>): Promise<OrderItemType[] | void> {
+  const headers = {
+    accept: 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+    'Content-Type': 'application/json'
+  }
+
+  try {
+    const response = await axios.post(`/api/orders/${orderId}/items`, JSON.stringify(items), { headers })
+    if (response.status !== 201) throw new Error('Failed to add items to order')
+
+    const data = response.data as OrderItemDb[]
+    const formattedItems = data.map((item) => formatOrderItem(item))
+
+    return formattedItems
+  } catch (error) {
+    console.error('Error adding items to order:', error)
   }
 }

@@ -13,7 +13,7 @@
       <OrderList :orders="cancelledOrders" @edit-order="openOrderModal" />
     </div>
     <NewOrder @new-order="openOrderModal" />
-    <OrderModal v-if="showOrderModal" @close="closeOrderModal" @save="saveOrder" />
+    <CreateOrderModal v-if="showOrderModal" @close="closeOrderModal" @save="saveOrder" />
   </div>
 </template>
 
@@ -22,7 +22,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import NewOrder from '../components/orders/NewOrder.vue'
 import OrderList from '../components/orders/OrderList.vue'
-import OrderModal from '../components/orders/OrderModal.vue'
+import CreateOrderModal from '../components/orders/CreateOrderModal.vue'
 import { CREATE_ORDER, FETCH_ORDERS, CLEAR_ORDER_DETAILS } from '../store/store'
 import type { OrderCreate } from '../types/orderTypes'
 

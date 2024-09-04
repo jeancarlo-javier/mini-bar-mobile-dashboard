@@ -3,7 +3,7 @@
     <button
       v-for="item in items"
       :key="item"
-      :class="['px-4 py-2 rounded-lg', selectedItem === item ? 'bg-stone-600 text-white' : 'bg-gray-200 text-gray-700']"
+      :class="['px-4 py-2 rounded-lg', selectedItem === item ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700']"
       type="button"
       @click="() => selectItem(item)"
     >

@@ -5,7 +5,17 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { useStore } from 'vuex'
 import MainLayout from './layouts/MainLayout.vue'
+import { FETCH_PRODUCTS, FETCH_USER_DATA } from './store/store'
+
+const store = useStore()
+
+onMounted(async () => {
+  store.dispatch(FETCH_USER_DATA)
+  store.dispatch(FETCH_PRODUCTS)
+})
 </script>
 
 <style scoped>

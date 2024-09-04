@@ -1,9 +1,9 @@
 <template>
   <li class="py-2 flex items-center justify-between">
-    <div class="w-full border p-4 rounded-md">
+    <div class="w-full border p-3 rounded-md">
       <div class="flex justify-between items-center mb-2">
         <span class="text-lg font-medium text-gray-900">{{ itemTitle }}</span>
-        <span class="text-sm text-gray-500">S./ {{ item.amount.toFixed(2) }}</span>
+        <span class="text-sm text-gray-500">S./ {{ itemTotal }}</span>
       </div>
       <div>
         <div class="grid grid-cols-2 gap-1">
@@ -17,7 +17,7 @@
             type="submit"
             class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            Completed
+            Complete
           </button>
         </div>
       </div>
@@ -40,5 +40,10 @@ const itemTitle = computed(() => {
   }
 
   return title
+})
+
+const itemTotal = computed(() => {
+  const total = item.amount * item.quantity
+  return total.toFixed(2)
 })
 </script>
