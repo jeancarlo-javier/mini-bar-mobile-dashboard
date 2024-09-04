@@ -18,13 +18,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useStore } from 'vuex'
 import NewOrder from '../components/orders/NewOrder.vue'
 import OrderList from '../components/orders/OrderList.vue'
 import OrderModal from '../components/orders/OrderModal.vue'
+import { CREATE_ORDER, FETCH_ORDERS, CLEAR_ORDER_DETAILS } from '../store/store'
 import type { OrderCreate } from '../types/orderTypes'
-import { useStore } from 'vuex'
-import { onMounted } from 'vue'
 
 const store = useStore()
 
@@ -35,8 +35,12 @@ const activeOrders = computed(() => store.getters.ordersByStatus('pending'))
 const completedOrders = computed(() => store.getters.ordersByStatus('completed'))
 const cancelledOrders = computed(() => store.getters.ordersByStatus('cancelled'))
 
-onMounted(() => {
-  store.dispatch('fetchOrders')
+onMounted(async () => {
+  store.dispatch(FETCH_ORDERS)
+})
+
+onUnmounted(() => {
+  store.commit(CLEAR_ORDER_DETAILS)
 })
 
 const openOrderModal = (): void => {
@@ -48,7 +52,7 @@ const closeOrderModal = () => {
 }
 
 const saveOrder = (newOrder: OrderCreate) => {
-  store.dispatch('createOrder', newOrder)
+  store.dispatch(CREATE_ORDER, newOrder)
   closeOrderModal()
 }
 </script>

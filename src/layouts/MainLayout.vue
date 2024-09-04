@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'pt-[64px] pb-[64px]': isLoggedIn }" class="main-layout">
+  <div :class="{ 'pt-[64px] pb-[64px]': isLoggedIn }" class="main-layout min-h-screen bg-gray-100">
     <NavigationBar :title="navigationTitle" :isHome="isHome" :backToLastPage="backToLastPage" />
     <div :class="{}">
       <slot />

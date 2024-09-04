@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Order, OrderCreate, OrderDb } from '../types/orderTypes'
+import { Order, OrderCreate, OrderDb, OrderItemType, OrderItemDb } from '../types/orderTypes'
 
 const formatOrder = (order: OrderDb): Order => {
   return {
@@ -8,7 +8,21 @@ const formatOrder = (order: OrderDb): Order => {
     orderTime: order.order_time,
     status: order.status,
     tableNumber: order.table_number,
-    total: order.total
+    total: order.total,
+    items: []
+  }
+}
+
+const formatOrderItem = (item: OrderItemDb): OrderItemType => {
+  return {
+    id: item.id,
+    product: item.product,
+    orderTime: item.order_time,
+    quantity: item.quantity,
+    amount: item.amount,
+    status: item.status,
+    paid: item.paid,
+    orderId: item.order_id
   }
 }
 
@@ -34,11 +48,33 @@ export async function getOrders(): Promise<Order[] | void> {
   }
 }
 
+export async function getOrderDetails(orderId: number): Promise<Order | void> {
+  const headers = {
+    accept: 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+    'Content-Type': 'application/json'
+  }
+
+  try {
+    const response = await axios.get(`/api/orders/${orderId}`, { headers })
+
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch order details')
+    }
+
+    const order = response.data as OrderDb
+    const formattedOrder = formatOrder(order)
+
+    return formattedOrder
+  } catch (error) {
+    console.error('Error fetching order details:', error)
+  }
+}
+
 export async function createOrder(order: OrderCreate): Promise<Order | void> {
   const headers = {
     accept: 'application/json',
-    Authorization:
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiamVhbmNhcmxvamF2aWVyNDNAZ21haWwuY29tIiwiZXhwIjoxNzI1NDE2MDM1fQ.ee8WO3A4urpN4FkvckFc0qwUJpNx_Yolojjg-aPT8jM',
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
     'Content-Type': 'application/json'
   }
 
@@ -53,5 +89,29 @@ export async function createOrder(order: OrderCreate): Promise<Order | void> {
     return formattedOrder
   } catch (error) {
     console.error('Error creating order:', error)
+  }
+}
+
+export async function getOrderItems(orderId: number): Promise<OrderItemType[] | void> {
+  console.log('🚀 ~ getOrderItems ~ orderId:', orderId)
+  const headers = {
+    accept: 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+    'Content-Type': 'application/json'
+  }
+
+  try {
+    const response = await axios.get(`/api/orders/${orderId}/items`, { headers })
+
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch order items')
+    }
+
+    const items = response.data as OrderItemDb[]
+    const formattedItems = items.map((item) => formatOrderItem(item))
+
+    return formattedItems
+  } catch (error) {
+    console.error('Error fetching order items:', error)
   }
 }

@@ -5,7 +5,6 @@
   >
     <div class="flex justify-between items-center mb-2">
       <h2 class="text-lg font-semibold text-gray-800">{{ `Order #${order.id}` }}</h2>
-      <span class="text-sm text-gray-600">Table {{ order.tableNumber }}</span>
     </div>
 
     <div class="flex justify-between items-center mb-2">
@@ -16,7 +15,8 @@
     <div class="border-t border-gray-200 my-2"></div>
 
     <div class="flex justify-between items-center mb-2">
-      <span class="font-semibold text-gray-800">Total: ${{ order.total.toFixed(2) }}</span>
+      <span class="text-sm text-gray-600">Table {{ order.tableNumber }}</span>
+      <span class="font-semibold text-gray-800">Total: S./ {{ order.total.toFixed(2) }}</span>
     </div>
   </div>
 </template>
@@ -24,6 +24,7 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 import type { Order } from '../../types/orderTypes'
+import { formatTime } from '../../utils/dates'
 
 // const emit = defineEmits(['view-details'])
 const router = useRouter()
@@ -33,13 +34,6 @@ interface Props {
 }
 
 const { order } = defineProps<Props>()
-
-const formatTime = (time: Date) => {
-  return new Date(time).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
 
 const goToDetails = () => {
   console.log(order)
