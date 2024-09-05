@@ -22,6 +22,7 @@ const SET_PRODUCTS = 'setProducts'
 const SET_ORDER_ITEMS = 'setOrderItems'
 const SET_USER_DATA = 'setUserData'
 const SET_ORDER_TOTAL = 'setOrderTotal'
+const UPDATE_LAST_ORDER_TIME = 'updateLastOrderTime'
 
 // Define the state type
 interface State {
@@ -65,6 +66,10 @@ const mutations = {
   [SET_ORDER_TOTAL](state: State, total: number) {
     if (!state.orderDetails) return
     state.orderDetails.total = total
+  },
+  [UPDATE_LAST_ORDER_TIME](state: State) {
+    if (!state.orderDetails) return
+    state.orderDetails.lastOrderTime = new Date()
   }
 }
 
@@ -107,6 +112,7 @@ const actions = {
 
     commit(ADD_ITEMS_TO_ORDER, newOrderItems.reverse())
     commit(SET_ORDER_TOTAL, newTotal)
+    commit(UPDATE_LAST_ORDER_TIME)
   }
 }
 
