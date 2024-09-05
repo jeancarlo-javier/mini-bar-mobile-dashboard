@@ -5,6 +5,8 @@ interface ErrorWithStatus extends Error {
   status?: number
 }
 
+const apiUrl = import.meta.env.VITE_ENV === 'production' ? import.meta.env.VITE_BACKEND_URL : '/api'
+
 export async function getUserData(): Promise<User | void> {
   const headers = {
     accept: 'application/json',
@@ -13,7 +15,7 @@ export async function getUserData(): Promise<User | void> {
   }
 
   try {
-    const response = await axios.get('/api/me', {
+    const response = await axios.get(`${apiUrl}/me`, {
       headers
     })
 

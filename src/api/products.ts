@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { Product } from '../types/productTypes'
 
+const apiUrl = import.meta.env.VITE_ENV === 'production' ? import.meta.env.VITE_BACKEND_URL : '/api'
+
 export async function getProducts(): Promise<Product[] | void> {
   const headers = {
     accept: 'application/json',
@@ -9,7 +11,7 @@ export async function getProducts(): Promise<Product[] | void> {
   }
 
   try {
-    const response = await axios.get('/api/products', {
+    const response = await axios.get(`${apiUrl}/products`, {
       headers
     })
 

@@ -2,6 +2,8 @@ import axios from 'axios'
 import type { OrderItemDb, OrderItemType } from '../types/orderTypes'
 import type { ProductItemDb } from '../types/productTypes'
 
+const apiUrl = import.meta.env.VITE_ENV === 'production' ? import.meta.env.VITE_BACKEND_URL : '/api'
+
 const formatOrderItem = (item: OrderItemDb): OrderItemType => {
   return {
     id: item.id,
@@ -23,7 +25,7 @@ export async function getOrderItems(orderId: number): Promise<OrderItemType[] | 
   }
 
   try {
-    const response = await axios.get(`/api/orders/${orderId}/items`, { headers })
+    const response = await axios.get(`${apiUrl}/orders/${orderId}/items`, { headers })
 
     if (response.status !== 200) {
       throw new Error('Failed to fetch order items')
@@ -46,7 +48,7 @@ export async function addItemsToOrder(orderId: number, items: Array<ProductItemD
   }
 
   try {
-    const response = await axios.post(`/api/orders/${orderId}/items`, JSON.stringify(items), { headers })
+    const response = await axios.post(`${apiUrl}/orders/${orderId}/items`, JSON.stringify(items), { headers })
     if (response.status !== 201) throw new Error('Failed to add items to order')
 
     const data = response.data as OrderItemDb[]
@@ -69,7 +71,7 @@ export async function toggleItemStatusByType(
   }
 
   try {
-    const response = await axios.patch(`/api/items/${itemId}/toggle-status`, { status: statusType }, { headers })
+    const response = await axios.patch(`${apiUrl}/items/${itemId}/toggle-status`, { status: statusType }, { headers })
 
     if (response.status !== 200) {
       throw new Error('Failed to toggle item status')
@@ -87,7 +89,7 @@ export async function cancelItem(orderId: number): Promise<void> {
   }
 
   try {
-    const response = await axios.patch(`/api/items/${orderId}/cancel`, {}, { headers })
+    const response = await axios.patch(`${apiUrl}/items/${orderId}/cancel`, {}, { headers })
 
     if (response.status !== 200) {
       throw new Error('Failed to cancel item.')

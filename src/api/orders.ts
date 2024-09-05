@@ -1,6 +1,8 @@
 import axios from 'axios'
 import type { Order, OrderCreate, OrderDb } from '../types/orderTypes'
 
+const apiUrl = import.meta.env.VITE_ENV === 'production' ? import.meta.env.VITE_BACKEND_URL : '/api'
+
 const formatOrder = (order: OrderDb): Order => {
   return {
     id: order.id,
@@ -16,7 +18,7 @@ const formatOrder = (order: OrderDb): Order => {
 
 export async function getOrders(): Promise<Order[] | void> {
   try {
-    const response = await axios.get('/api/orders', {
+    const response = await axios.get(`${apiUrl}/orders`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
         'Content-Type': 'application/json'
@@ -44,7 +46,7 @@ export async function getOrderDetails(orderId: number): Promise<Order | void> {
   }
 
   try {
-    const response = await axios.get(`/api/orders/${orderId}`, { headers })
+    const response = await axios.get(`${apiUrl}/orders/${orderId}`, { headers })
 
     if (response.status !== 200) {
       throw new Error('Failed to fetch order details')
@@ -67,7 +69,7 @@ export async function createOrder(order: OrderCreate): Promise<Order | void> {
   }
 
   try {
-    const response = await axios.post('/api/orders', order, { headers })
+    const response = await axios.post(`${apiUrl}/orders`, order, { headers })
 
     if (response.status !== 201) throw new Error('Failed to create order')
 
@@ -88,7 +90,7 @@ export async function completeOrder(orderId: number): Promise<void> {
   }
 
   try {
-    const response = await axios.patch(`/api/orders/${orderId}/complete`, {}, { headers })
+    const response = await axios.patch(`${apiUrl}/orders/${orderId}/complete`, {}, { headers })
 
     if (response.status !== 200) {
       throw new Error('Failed to complete order')

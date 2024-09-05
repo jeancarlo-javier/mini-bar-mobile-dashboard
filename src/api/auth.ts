@@ -1,5 +1,8 @@
 import axios from 'axios'
 
+const apiUrl = import.meta.env.VITE_ENV === 'production' ? import.meta.env.VITE_BACKEND_URL : '/api'
+console.log('🚀 ~ apiUrl:', apiUrl)
+
 interface LoginParams {
   email: string
   password: string
@@ -8,7 +11,7 @@ interface LoginParams {
 export async function login({ email, password }: LoginParams): Promise<void> {
   try {
     const response = await axios.post(
-      '/api/login',
+      `${apiUrl}/login`,
       new URLSearchParams({
         grant_type: 'password',
         username: email,
