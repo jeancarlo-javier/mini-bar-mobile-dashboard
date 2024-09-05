@@ -2,7 +2,7 @@ import { createStore } from 'vuex'
 import type { Commit } from 'vuex'
 import type { Order, OrderCreate, OrderItemType } from '../types/orderTypes'
 import type { Product, ProductItemDb } from '../types/productTypes'
-import { getOrders, createOrder, getOrderDetails } from '../api/orders'
+import { getOrders, createOrder, getOrderDetails, completeOrder } from '../api/orders'
 import { getOrderItems, addItemsToOrder, toggleItemStatusByType } from '../api/items'
 import { getProducts } from '../api/products'
 import { getUserData } from '../api/user'
@@ -93,6 +93,13 @@ const mutations = {
 
     state.orderDetails.items[selectedItemIndex].status =
       state.orderDetails.items[selectedItemIndex].status === 'pending' ? 'attended' : 'pending'
+  },
+  [COMPLETE_ORDER](state: State, orderId: number) {
+    if (!state.orderDetails) return
+
+    if (state.orderDetails.id === orderId) {
+      state.orderDetails.status = 'completed'
+    }
   }
 }
 
@@ -144,6 +151,10 @@ const actions = {
   async [TOGGLE_ITEM_STATUS]({ commit }: { commit: Commit }, itemId: number) {
     await toggleItemStatusByType(itemId, 'item_status')
     commit(TOGGLE_ITEM_STATUS, itemId)
+  },
+  async [COMPLETE_ORDER]({ commit }: { commit: Commit }, orderId: number) {
+    await completeOrder(orderId)
+    commit(COMPLETE_ORDER, orderId)
   }
 }
 

@@ -1,11 +1,11 @@
 <template>
   <div v-if="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full relative">
       <div class="px-6 py-4 border-b border-gray-200">
         <h3 class="text-lg font-semibold text-gray-900">Add New Item</h3>
       </div>
       <form @submit.prevent="submitForm">
-        <div class="bg-gray-100 p-4">
+        <div class="bg-gray-100">
           <AddProductList :initialProducts="products" @edit-items="editItems" />
           <FormError :message="errorMessage || ''" type="error" class="mt-4" />
         </div>
@@ -25,6 +25,7 @@
           </button>
         </div>
       </form>
+      <LoaderBlurBox v-if="loading" />
     </div>
   </div>
 </template>
@@ -35,6 +36,9 @@ import { useStore } from 'vuex'
 import type { ProductItem, ProductItemDb } from '../../types/productTypes'
 import FormError from '../FormError.vue'
 import AddProductList from '../AddProductList.vue'
+import LoaderBlurBox from '../LoaderBlurBox.vue'
+
+const loading = ref(false)
 
 defineProps<{
   isModalOpen: boolean
@@ -76,7 +80,10 @@ const closeModal = () => {
 }
 
 const submitForm = () => {
+  loading.value = true
+
   if (items.value.length === 0) {
+    loading.value = false
     return (errorMessage.value = 'Please add at least one item.')
   }
 

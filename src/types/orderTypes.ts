@@ -23,12 +23,14 @@ export interface OrderItemType {
   orderId: number
 }
 
+export type OrderStatus = 'pending' | 'completed' | 'cancelled'
+
 export interface Order {
   id: number
   user: User
   orderTime: Date
   lastOrderTime: Date
-  status: string
+  status: OrderStatus
   tableNumber: number
   total: number
   items: Array<OrderItemType>
@@ -39,7 +41,7 @@ export interface OrderDb {
   user: User
   order_time: Date
   last_order_time: Date
-  status: string
+  status: OrderStatus
   table_number: number
   total: number
 }

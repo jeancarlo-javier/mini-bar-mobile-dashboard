@@ -79,3 +79,21 @@ export async function createOrder(order: OrderCreate): Promise<Order | void> {
     console.error('Error creating order:', error)
   }
 }
+
+export async function completeOrder(orderId: number): Promise<void> {
+  const headers = {
+    accept: 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+    'Content-Type': 'application/json'
+  }
+
+  try {
+    const response = await axios.patch(`/api/orders/${orderId}/complete`, {}, { headers })
+
+    if (response.status !== 200) {
+      throw new Error('Failed to complete order')
+    }
+  } catch (error) {
+    console.error('Error completing order:', error)
+  }
+}

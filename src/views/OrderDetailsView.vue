@@ -2,7 +2,7 @@
   <div class="h-full bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
     <div v-if="orderDetails" class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
       <!-- Order Information -->
-      <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+      <div class="px-4 py-4 bg-gray-50 border-b border-gray-200">
         <div class="mt-2 flex items-center justify-between text-sm text-gray-500">
           <h1 class="text-2xl font-bold text-gray-900">
             Order #{{ orderDetails.id }} - Table {{ orderDetails.tableNumber }}
@@ -18,31 +18,40 @@
       </div>
 
       <!-- Order Items -->
-      <div class="px-6 pt-4">
+      <div class="px-4 pt-4">
         <h2 class="text-lg font-semibold text-gray-900 mb-1">Order Items</h2>
-        <ul v-if="orderItems.length > 0" class="space-y-3">
+        <ul v-if="!loadingItems && orderItems.length > 0" class="space-y-3">
           <OrderItem
-            v-for="item in orderItems"
             :key="item.id"
+            v-for="item in orderItems"
+            :orderStatus="orderDetails.status"
             :item="item"
             @toggle-item-status="toggleItemStatus"
             @toggle-item-paid-status="toggleItemPaidStatus"
           />
         </ul>
+        <div v-else-if="loadingItems" class="p-2 bg-gray-100 rounded-lg flex items-center justify-center">
+          <Loader />
+        </div>
         <div v-else class="text-center text-gray-500 text-sm p-2 bg-gray-100 rounded-lg">No items found</div>
       </div>
       <hr class="my-4" />
-      <div class="px-6 pb-4 flex justify-between items-center">
+      <div class="px-4 pb-4 flex justify-between items-center">
         <h2 class="text-lg font-semibold text-gray-900 mb-1">Total:</h2>
         <p class="text-lg font-semibold text-gray-900">S./ {{ orderDetails.total.toFixed(2) }}</p>
       </div>
       <!-- Add Item Button -->
     </div>
     <div v-else class="flex items-center justify-center">
-      <div class="text-center">...loading</div>
+      <Loader />
     </div>
 
-    <OrderBottomActions @open-modal="openModal" :allowCompleteOrder="allowCompleteOrder" />
+    <OrderBottomActions
+      v-if="orderDetails && orderDetails.status === 'pending'"
+      :allowCompleteOrder="allowCompleteOrder"
+      @open-modal="openModal"
+      @complete-order="completeOrder"
+    />
 
     <!-- Add Item Modal -->
     <Teleport to="body">
@@ -62,18 +71,21 @@ import {
   FETCH_ORDER_ITEMS,
   ADD_ITEMS_TO_ORDER,
   TOGGLE_ITEM_PAID_STATUS,
-  TOGGLE_ITEM_STATUS
+  TOGGLE_ITEM_STATUS,
+  COMPLETE_ORDER
 } from '../store/store'
 import { formatTime } from '../utils/dates'
 import OrderItem from '../components/orders/OrderItem.vue'
 import OrderBottomActions from '../components/orders/OrderBottomActions.vue'
 import AddProductItems from '../components/orders/AddProductItems.vue'
+import Loader from '../components/LoaderIcon.vue'
 
 const store = useStore()
 const route = useRoute()
 
 const isModalOpen = ref(false)
 const newItem = ref({ name: '', price: 0 })
+const loadingItems = ref(true)
 
 const orderDetails = computed<Order | null>(() => store.state.orderDetails)
 const orderItems = computed<OrderItemType[]>(() => store.state.orderDetails.items)
@@ -83,6 +95,7 @@ onMounted(async () => {
 
   await store.dispatch(FETCH_ORDER_DETAILS, orderId)
   await store.dispatch(FETCH_ORDER_ITEMS, orderId)
+  loadingItems.value = false
 })
 
 const statusClasses = computed(() => {
@@ -125,25 +138,10 @@ const allowCompleteOrder = computed(() => {
   return allowed
 })
 
-// const completeOrder = () => {
-//   // store.dispatch(COMPLETE_ORDER, order.value.id)
-//   // order.value.status = 'Completed'
-//   // order.value.updatedAt = new Date()
-// }
-
-// const togleOrderStatus = (order) => {
-//   order.status = order.status === 'Active' ? 'Completed' : 'Active'
-//   order.updatedAt OrderItemTypee()
-// }
-
-// const openDropdowns = ref({})
-
-// const toggleDropdown = (itemId) => {
-//   // openDropdowns.value = {
-//   //   ...openDropdowns.value,
-//   //   [itemId]: !openDropdowns.value[itemId]
-//   // }OrderItemType
-// }
+const completeOrder = () => {
+  if (!orderDetails.value) return
+  store.dispatch(COMPLETE_ORDER, orderDetails.value.id)
+}
 
 const toggleItemPaidStatus = (itemId: number) => {
   store.dispatch(TOGGLE_ITEM_PAID_STATUS, itemId)
@@ -153,22 +151,10 @@ const toggleItemStatus = (itemId: number) => {
   store.dispatch(TOGGLE_ITEM_STATUS, itemId)
 }
 
-// const completeItem = (item) => {
-//   // Implement the logic for marking an item as completed
-//   // For example, you could add a 'completed' property to the item
-//   // item.completed = true
-//   // order.value.updatedAt = new Date()
-//   // closeDropdown(item.id)
-// }
-
 // const deleteItem = (itemId) => {
 //   // order.value.items = order.value.items.filter((item) => item.id !== itemId)
 //   // order.value.updatedAt = new Date()
 //   // closeDropdown(itemId)
-// }
-
-// const closeDropdown = (itemId) => {
-//   // openDropdowns.value[itemId] = false
 // }
 
 const openModal = () => {
