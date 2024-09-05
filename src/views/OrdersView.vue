@@ -13,24 +13,25 @@
       <OrderList :orders="cancelledOrders" @edit-order="openOrderModal" />
     </div>
     <NewOrder @new-order="openOrderModal" />
-    <CreateOrderModal v-if="showOrderModal" @close="closeOrderModal" @save="saveOrder" />
+    <CreateOrderModal v-if="showOrderModal" @close="closeOrderModal" @save="createOrder" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import NewOrder from '../components/orders/NewOrder.vue'
 import OrderList from '../components/orders/OrderList.vue'
 import CreateOrderModal from '../components/orders/CreateOrderModal.vue'
 import { CREATE_ORDER, FETCH_ORDERS, CLEAR_ORDER_DETAILS } from '../store/store'
-import type { OrderCreate } from '../types/orderTypes'
+import type { OrderCreate, Order } from '../types/orderTypes'
 
 const store = useStore()
+const router = useRouter()
 
 const showOrderModal = ref<boolean>(false)
 
-// const orders = computed(() => store.state.orders)
 const activeOrders = computed(() => store.getters.ordersByStatus('pending'))
 const completedOrders = computed(() => store.getters.ordersByStatus('completed'))
 const cancelledOrders = computed(() => store.getters.ordersByStatus('cancelled'))
@@ -51,8 +52,9 @@ const closeOrderModal = () => {
   showOrderModal.value = false
 }
 
-const saveOrder = (newOrder: OrderCreate) => {
-  store.dispatch(CREATE_ORDER, newOrder)
+const createOrder = async (orderCreateData: OrderCreate) => {
+  const createdOrder = (await store.dispatch(CREATE_ORDER, orderCreateData)) as Order
+  router.push({ name: 'order-details', params: { orderId: createdOrder.id } })
   closeOrderModal()
 }
 </script>

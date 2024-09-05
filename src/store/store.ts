@@ -76,6 +76,7 @@ const actions = {
   async [CREATE_ORDER]({ commit, state }: { commit: Commit; state: State }, order: OrderCreate) {
     const newOrder = await createOrder(order)
     commit(SET_ORDERS, [newOrder, ...state.orders] as Order[])
+    return newOrder
   },
   async [FETCH_ORDER_DETAILS]({ commit }: { commit: Commit }, orderId: number) {
     const order = await getOrderDetails(orderId)
@@ -101,7 +102,7 @@ const actions = {
 
     if (!newOrderItems || !store.state.orderDetails) return
 
-    const newItemsTotal = newOrderItems.reduce((acc, item) => item.amount * item.quantity + acc, 0)
+    const newItemsTotal = newOrderItems.reduce((acc, item) => item.amount + acc, 0)
     const newTotal = newItemsTotal + store.state.orderDetails.total
 
     commit(ADD_ITEMS_TO_ORDER, newOrderItems.reverse())

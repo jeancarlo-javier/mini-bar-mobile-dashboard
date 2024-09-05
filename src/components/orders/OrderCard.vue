@@ -7,9 +7,9 @@
       <h2 class="text-lg font-semibold text-gray-800">{{ `Order #${order.id}` }}</h2>
     </div>
 
-    <div class="flex justify-between items-center mb-2">
-      <span class="text-sm text-gray-600">{{ order.user.name }}</span>
-      <span class="text-sm text-gray-600">{{ formatTime(order.orderTime) }}</span>
+    <div class="mt-2 flex items-center justify-between text-sm text-gray-500">
+      <p>Created at: {{ formatTime(order.orderTime) }}</p>
+      <p>Updated at: {{ formatTime(order.lastOrderTime) }}</p>
     </div>
 
     <div class="border-t border-gray-200 my-2"></div>
@@ -36,7 +36,6 @@ interface Props {
 const { order } = defineProps<Props>()
 
 const goToDetails = () => {
-  console.log(order)
   router.push({ name: 'order-details', params: { orderId: order.id } })
 }
 </script>

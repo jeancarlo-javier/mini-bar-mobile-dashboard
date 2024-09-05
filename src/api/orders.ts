@@ -7,6 +7,7 @@ const formatOrder = (order: OrderDb): Order => {
     id: order.id,
     user: order.user,
     orderTime: order.order_time,
+    lastOrderTime: order.last_order_time,
     status: order.status,
     tableNumber: order.table_number,
     total: order.total,

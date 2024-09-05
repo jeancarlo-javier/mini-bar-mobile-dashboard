@@ -13,14 +13,14 @@
         </div>
         <div class="mt-2 flex items-center justify-between text-sm text-gray-500">
           <p>Created at: {{ formatTime(orderDetails.orderTime) }}</p>
-          <p>{{ orderDetails.user.name }}</p>
+          <p>Updated at: {{ formatTime(orderDetails.lastOrderTime) }}</p>
         </div>
       </div>
 
       <!-- Order Items -->
       <div class="px-6 pt-4">
         <h2 class="text-lg font-semibold text-gray-900 mb-1">Order Items</h2>
-        <ul v-if="orderItems.length > 0">
+        <ul v-if="orderItems.length > 0" class="space-y-3">
           <OrderItem v-for="item in orderItems" :key="item.id" :item="item" />
         </ul>
         <div v-else class="text-center text-gray-500 text-sm p-2 bg-gray-100 rounded-lg">No items found</div>
