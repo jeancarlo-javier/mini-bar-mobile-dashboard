@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, toRef } from 'vue'
 import { useStore } from 'vuex'
 import type { ProductItem, ProductItemDb } from '../../types/productTypes'
 import FormError from '../FormError.vue'
@@ -40,9 +40,15 @@ import LoaderBlurBox from '../LoaderBlurBox.vue'
 
 const loading = ref(false)
 
-defineProps<{
+const props = defineProps<{
   isModalOpen: boolean
 }>()
+
+const modalOpenRef = toRef(props, 'isModalOpen')
+
+watch(modalOpenRef, () => {
+  loading.value = false
+})
 
 const store = useStore()
 
@@ -72,6 +78,7 @@ const editItems = (newItems: Array<ProductItem>) => {
 const reset = () => {
   items.value = []
   errorMessage.value = null
+  loading.value = false
 }
 
 const closeModal = () => {

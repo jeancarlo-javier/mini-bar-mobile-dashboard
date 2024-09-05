@@ -13,8 +13,10 @@ import { FETCH_PRODUCTS, FETCH_USER_DATA } from './store/store'
 const store = useStore()
 
 onMounted(async () => {
-  store.dispatch(FETCH_USER_DATA)
-  store.dispatch(FETCH_PRODUCTS)
+  if (window.location.pathname !== '/login') {
+    store.dispatch(FETCH_USER_DATA)
+    store.dispatch(FETCH_PRODUCTS)
+  }
 })
 </script>
 

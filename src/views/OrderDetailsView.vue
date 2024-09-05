@@ -24,10 +24,11 @@
           <OrderItem
             :key="item.id"
             v-for="item in orderItems"
-            :orderStatus="orderDetails.status"
             :item="item"
+            :orderStatus="orderDetails.status"
             @toggle-item-status="toggleItemStatus"
             @toggle-item-paid-status="toggleItemPaidStatus"
+            @cancel-item="cancelItem"
           />
         </ul>
         <div v-else-if="loadingItems" class="p-2 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -72,7 +73,8 @@ import {
   ADD_ITEMS_TO_ORDER,
   TOGGLE_ITEM_PAID_STATUS,
   TOGGLE_ITEM_STATUS,
-  COMPLETE_ORDER
+  COMPLETE_ORDER,
+  CANCEL_ITEM
 } from '../store/store'
 import { formatTime } from '../utils/dates'
 import OrderItem from '../components/orders/OrderItem.vue'
@@ -88,7 +90,10 @@ const newItem = ref({ name: '', price: 0 })
 const loadingItems = ref(true)
 
 const orderDetails = computed<Order | null>(() => store.state.orderDetails)
-const orderItems = computed<OrderItemType[]>(() => store.state.orderDetails.items)
+const orderItems = computed<OrderItemType[]>(() => {
+  const _items = store.state.orderDetails?.items
+  return _items.filter((item: OrderItemType) => item.status !== 'canceled')
+})
 
 onMounted(async () => {
   const orderId = parseInt(route.params.orderId as string)
@@ -103,10 +108,10 @@ const statusClasses = computed(() => {
 
   switch (orderDetails.value.status) {
     case 'pending':
-      return 'bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium'
+      return 'bg-amber-100 text-amber-800 px-2 py-1 rounded-full text-xs font-medium'
     case 'completed':
       return 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium'
-    case 'cancelled':
+    case 'canceled':
       return 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium'
     default:
       return 'bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium'
@@ -114,9 +119,9 @@ const statusClasses = computed(() => {
 })
 
 const orderStatus = computed<string>(() => {
-  if (orderDetails.value?.status === 'pending') return 'Active'
+  if (orderDetails.value?.status === 'pending') return 'Pending'
   if (orderDetails.value?.status === 'completed') return 'Completed'
-  if (orderDetails.value?.status === 'cancelled') return 'Cancelled'
+  if (orderDetails.value?.status === 'canceled') return 'canceled'
   return 'Unknown'
 })
 
@@ -173,5 +178,9 @@ const addItems = async (items: Array<ProductItemDb>) => {
     items
   })
   closeModal()
+}
+
+const cancelItem = (itemId: number) => {
+  store.dispatch(CANCEL_ITEM, itemId)
 }
 </script>

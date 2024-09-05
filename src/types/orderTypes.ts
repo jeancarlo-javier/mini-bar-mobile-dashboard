@@ -7,7 +7,7 @@ export interface OrderItemDb {
   order_time: Date
   quantity: number
   amount: number
-  status: 'pending' | 'attended' | 'cancelled'
+  status: 'pending' | 'attended' | 'canceled'
   paid: boolean
   order_id: number
 }
@@ -18,12 +18,12 @@ export interface OrderItemType {
   orderTime: Date
   quantity: number
   amount: number
-  status: 'pending' | 'attended' | 'cancelled'
+  status: 'pending' | 'attended' | 'canceled'
   paid: boolean
   orderId: number
 }
 
-export type OrderStatus = 'pending' | 'completed' | 'cancelled'
+export type OrderStatus = 'pending' | 'completed' | 'canceled'
 
 export interface Order {
   id: number

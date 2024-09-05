@@ -1,6 +1,6 @@
 <template>
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto relative">
       <h2 class="text-xl font-bold mb-4">
         {{ editingOrder ? 'Edit Order' : 'New Order' }}
       </h2>
@@ -28,6 +28,7 @@
           </button>
         </div>
       </form>
+      <LoaderBlurBox v-if="loading" />
     </div>
   </div>
 </template>
@@ -37,8 +38,11 @@ import { ref } from 'vue'
 import SelectableButtons from '../inputs/SelectableButtons.vue'
 import { OrderCreate } from '../../types/orderTypes'
 import FormError from '../FormError.vue'
+import LoaderBlurBox from '../LoaderBlurBox.vue'
 
 const emit = defineEmits(['close', 'save'])
+
+const loading = ref(false)
 
 const options = [1, 2, 3, 4, 5, 6]
 const selectedTableNumber = ref<number | null>(null)
@@ -54,7 +58,10 @@ const closeModal = () => {
 }
 
 const saveOrder = () => {
+  loading.value = true
+
   if (!selectedTableNumber.value) {
+    loading.value = false
     return (errorMessage.value = 'Table number is required')
   }
 

@@ -78,3 +78,21 @@ export async function toggleItemStatusByType(
     console.error('Error toggling item status:', error)
   }
 }
+
+export async function cancelItem(orderId: number): Promise<void> {
+  const headers = {
+    accept: 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+    'Content-Type': 'application/json'
+  }
+
+  try {
+    const response = await axios.patch(`/api/items/${orderId}/cancel`, {}, { headers })
+
+    if (response.status !== 200) {
+      throw new Error('Failed to cancel item.')
+    }
+  } catch (error) {
+    console.error('Error canceling items:', error)
+  }
+}

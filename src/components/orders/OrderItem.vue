@@ -12,7 +12,7 @@
         </div>
       </div>
       <div v-if="orderStatus === 'pending'" class="flex gap-3 p-3">
-        <button type="button">
+        <button v-if="item.status !== 'attended' && !item.paid" type="button" @click="openConfirmModal">
           <Trash class="w-5 h-5 text-red-400" stroke-width="2px" />
         </button>
         <button
@@ -34,6 +34,9 @@
       </div>
     </div>
     <LoaderBlurBox v-if="loading" />
+    <Teleport to="body">
+      <ConfirmModal v-if="isModalOpen" @close="closeConfirmModal" @confirm="cancelItem" />
+    </Teleport>
   </li>
 </template>
 
@@ -43,14 +46,17 @@ import { Trash } from 'lucide-vue-next'
 import type { OrderItemType, OrderStatus } from '../../types/orderTypes'
 import LoaderBlurBox from '../LoaderBlurBox.vue'
 import { formatTime } from '../../utils/dates'
+import ConfirmModal from '../modals/ConfirmModal.vue'
 
-const emit = defineEmits(['toggle-item-paid-status', 'toggle-item-status'])
+const emit = defineEmits(['toggle-item-paid-status', 'toggle-item-status', 'cancel-item'])
 const loading = ref(false)
 
 const { item } = defineProps<{
   item: OrderItemType
   orderStatus: OrderStatus
 }>()
+
+const isModalOpen = ref(false)
 
 watch(
   () => item.paid,
@@ -71,14 +77,14 @@ const formatedTime = computed(() => formatTime(item.orderTime))
 const itemStatusText = computed(() => {
   if (item.status === 'pending') return 'Pending'
   if (item.status === 'attended') return 'Attended'
-  if (item.status === 'cancelled') return 'Cancelled'
+  if (item.status === 'canceled') return 'canceled'
   return 'Unknown'
 })
 
 const itemStatusClass = computed(() => {
   if (item.status === 'pending') return 'border-amber-500 text-amber-500'
   if (item.status === 'attended') return 'bg-green-100 text-green-600 border-green-400 '
-  if (item.status === 'cancelled') return 'bg-gray-100 text-gray-800 border-gray-400 '
+  if (item.status === 'canceled') return 'bg-gray-100 text-gray-800 border-gray-400 '
   return ''
 })
 
@@ -88,7 +94,7 @@ const itemPaymentStatusClass = computed(() => {
 })
 
 const roundedStatusClass = computed(() => {
-  if (item.status === 'cancelled') return 'bg-gray-500'
+  if (item.status === 'canceled') return 'bg-gray-500'
   if (item.status !== 'attended' && !item.paid) return 'bg-red-500'
   if (item.status === 'attended') return item.paid ? 'bg-green-500' : 'bg-amber-500'
   if (item.status === 'pending') return 'bg-amber-500'
@@ -117,5 +123,19 @@ const togleItemStatus = (itemId: number) => {
 const togglePaidStatus = (itemId: number) => {
   loading.value = true
   emit('toggle-item-paid-status', itemId)
+}
+
+const cancelItem = () => {
+  emit('cancel-item', item.id)
+  isModalOpen.value = false
+  loading.value = true
+}
+
+const openConfirmModal = () => {
+  isModalOpen.value = true
+}
+
+const closeConfirmModal = () => {
+  isModalOpen.value = false
 }
 </script>

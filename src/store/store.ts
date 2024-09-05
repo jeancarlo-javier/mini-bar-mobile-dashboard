@@ -3,7 +3,7 @@ import type { Commit } from 'vuex'
 import type { Order, OrderCreate, OrderItemType } from '../types/orderTypes'
 import type { Product, ProductItemDb } from '../types/productTypes'
 import { getOrders, createOrder, getOrderDetails, completeOrder } from '../api/orders'
-import { getOrderItems, addItemsToOrder, toggleItemStatusByType } from '../api/items'
+import { getOrderItems, addItemsToOrder, toggleItemStatusByType, cancelItem } from '../api/items'
 import { getProducts } from '../api/products'
 import { getUserData } from '../api/user'
 
@@ -27,6 +27,7 @@ const UPDATE_LAST_ORDER_TIME = 'updateLastOrderTime'
 export const PAY_ORDER_ITEM = 'payOrderItem'
 export const TOGGLE_ITEM_PAID_STATUS = 'togglePaidStatus'
 export const TOGGLE_ITEM_STATUS = 'toggleItemStatus'
+export const CANCEL_ITEM = 'cancelItem'
 
 // Define the state type
 interface State {
@@ -100,6 +101,15 @@ const mutations = {
     if (state.orderDetails.id === orderId) {
       state.orderDetails.status = 'completed'
     }
+  },
+  [CANCEL_ITEM](state: State, itemId: number) {
+    if (!state.orderDetails) return
+
+    const selectedItemIndex = state.orderDetails.items.findIndex((item) => item.id === itemId)
+
+    if (selectedItemIndex === -1) return
+
+    state.orderDetails.items[selectedItemIndex].status = 'canceled'
   }
 }
 
@@ -155,12 +165,30 @@ const actions = {
   async [COMPLETE_ORDER]({ commit }: { commit: Commit }, orderId: number) {
     await completeOrder(orderId)
     commit(COMPLETE_ORDER, orderId)
+  },
+  async [CANCEL_ITEM]({ commit, state }: { commit: Commit; state: State }, itemId: number) {
+    await cancelItem(itemId)
+
+    if (!state.orderDetails) return
+
+    const orderTotal = state.orderDetails.total
+    const item = state.orderDetails?.items.find((item) => item.id === itemId)
+
+    if (!item) return
+
+    const discount = item.amount
+
+    commit(CANCEL_ITEM, itemId)
+    commit(SET_ORDER_TOTAL, orderTotal - discount)
   }
 }
 
 const getters = {
   ordersByStatus: (state: State) => (status: string) => {
     return state.orders.filter((order) => order.status === status)
+  },
+  activeItems: (state: State) => () => {
+    return state.orderDetails?.items.filter((item) => item.status !== 'canceled')
   }
 }
 

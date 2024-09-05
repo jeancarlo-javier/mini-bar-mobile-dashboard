@@ -30,6 +30,7 @@ export async function getUserData(): Promise<User | void> {
       const err = error as ErrorWithStatus
       if (err.status === 401) {
         localStorage.removeItem('token')
+        window.location.replace('/login')
       }
     }
   }

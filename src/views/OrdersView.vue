@@ -9,8 +9,8 @@
       <OrderList :orders="completedOrders" :loadingOrders="loadingOrders" @edit-order="openOrderModal" />
     </div>
     <div class="mb-4">
-      <h2 class="text-xl font-bold mb-2 text-center">Cancelled Orders</h2>
-      <OrderList :orders="cancelledOrders" :loadingOrders="loadingOrders" @edit-order="openOrderModal" />
+      <h2 class="text-xl font-bold mb-2 text-center">Canceled Orders</h2>
+      <OrderList :orders="canceledOrders" :loadingOrders="loadingOrders" @edit-order="openOrderModal" />
     </div>
     <NewOrder @new-order="openOrderModal" />
     <CreateOrderModal v-if="showOrderModal" @close="closeOrderModal" @save="createOrder" />
@@ -34,7 +34,7 @@ const showOrderModal = ref<boolean>(false)
 
 const activeOrders = computed(() => store.getters.ordersByStatus('pending'))
 const completedOrders = computed(() => store.getters.ordersByStatus('completed'))
-const cancelledOrders = computed(() => store.getters.ordersByStatus('cancelled'))
+const canceledOrders = computed(() => store.getters.ordersByStatus('canceled'))
 
 const loadingOrders = ref(true)
 
