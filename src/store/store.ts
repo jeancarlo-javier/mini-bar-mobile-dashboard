@@ -2,7 +2,8 @@ import { createStore } from 'vuex'
 import type { Commit } from 'vuex'
 import type { Order, OrderCreate, OrderItemType } from '../types/orderTypes'
 import type { Product, ProductItemDb } from '../types/productTypes'
-import { getOrders, createOrder, getOrderDetails, getOrderItems, addItemsToOrder } from '../api/orders'
+import { getOrders, createOrder, getOrderDetails } from '../api/orders'
+import { getOrderItems, addItemsToOrder, toggleItemStatusByType } from '../api/items'
 import { getProducts } from '../api/products'
 import { getUserData } from '../api/user'
 
@@ -23,6 +24,9 @@ const SET_ORDER_ITEMS = 'setOrderItems'
 const SET_USER_DATA = 'setUserData'
 const SET_ORDER_TOTAL = 'setOrderTotal'
 const UPDATE_LAST_ORDER_TIME = 'updateLastOrderTime'
+export const PAY_ORDER_ITEM = 'payOrderItem'
+export const TOGGLE_ITEM_PAID_STATUS = 'togglePaidStatus'
+export const TOGGLE_ITEM_STATUS = 'toggleItemStatus'
 
 // Define the state type
 interface State {
@@ -70,6 +74,25 @@ const mutations = {
   [UPDATE_LAST_ORDER_TIME](state: State) {
     if (!state.orderDetails) return
     state.orderDetails.lastOrderTime = new Date()
+  },
+  [TOGGLE_ITEM_PAID_STATUS](state: State, itemId: number) {
+    if (!state.orderDetails) return
+
+    const selectedItemIndex = state.orderDetails.items.findIndex((item) => item.id === itemId)
+
+    if (selectedItemIndex === -1) return
+
+    state.orderDetails.items[selectedItemIndex].paid = !state.orderDetails.items[selectedItemIndex].paid
+  },
+  [TOGGLE_ITEM_STATUS](state: State, itemId: number) {
+    if (!state.orderDetails) return
+
+    const selectedItemIndex = state.orderDetails.items.findIndex((item) => item.id === itemId)
+
+    if (selectedItemIndex === -1) return
+
+    state.orderDetails.items[selectedItemIndex].status =
+      state.orderDetails.items[selectedItemIndex].status === 'pending' ? 'attended' : 'pending'
   }
 }
 
@@ -113,6 +136,14 @@ const actions = {
     commit(ADD_ITEMS_TO_ORDER, newOrderItems.reverse())
     commit(SET_ORDER_TOTAL, newTotal)
     commit(UPDATE_LAST_ORDER_TIME)
+  },
+  async [TOGGLE_ITEM_PAID_STATUS]({ commit }: { commit: Commit }, itemId: number) {
+    await toggleItemStatusByType(itemId, 'item_payment_status')
+    commit(TOGGLE_ITEM_PAID_STATUS, itemId)
+  },
+  async [TOGGLE_ITEM_STATUS]({ commit }: { commit: Commit }, itemId: number) {
+    await toggleItemStatusByType(itemId, 'item_status')
+    commit(TOGGLE_ITEM_STATUS, itemId)
   }
 }
 

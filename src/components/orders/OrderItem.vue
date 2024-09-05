@@ -15,15 +15,19 @@
           </button>
           <button
             type="button"
-            class="flex-1 px-4 py-2 border border-green-400 rounded-md text-sm font-medium text-green-400 hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            class="flex-1 px-4 py-2 border rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300"
+            :class="itemPaymentStatusClass"
+            @click="togglePaidStatus(item.id)"
           >
-            Mark as paid
+            {{ item.paid ? 'Mark as Unpaid' : 'Mark as Paid' }}
           </button>
           <button
             type="submit"
-            class="flex-1 px-4 py-2 border border-amber-400 text-amber-400 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+            class="flex-1 px-4 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+            :class="itemStatusClass"
+            @click="togleItemStatus(item.id)"
           >
-            Pending
+            {{ itemStatusText }}
           </button>
         </div>
       </div>
@@ -37,11 +41,32 @@ import type { OrderItemType } from '../../types/orderTypes'
 import { formatTime } from '../../utils/dates'
 import { Trash } from 'lucide-vue-next'
 
+const emit = defineEmits(['toggle-item-paid-status', 'toggle-item-status'])
+
 const { item } = defineProps<{
   item: OrderItemType
 }>()
 
 const formatedTime = computed(() => formatTime(item.orderTime))
+
+const itemStatusText = computed(() => {
+  if (item.status === 'pending') return 'Pending'
+  if (item.status === 'attended') return 'Attended'
+  if (item.status === 'cancelled') return 'Cancelled'
+  return 'Unknown'
+})
+
+const itemStatusClass = computed(() => {
+  if (item.status === 'pending') return 'border-amber-500 text-amber-500'
+  if (item.status === 'attended') return 'bg-green-100 text-green-800 border-green-400 '
+  if (item.status === 'cancelled') return 'bg-gray-100 text-gray-800 border-gray-400 '
+  return ''
+})
+
+const itemPaymentStatusClass = computed(() => {
+  if (item.paid) return 'bg-green-100 text-green-600 border-green-400 '
+  return 'text-green-600 border-green-400 '
+})
 
 const itemTitle = computed(() => {
   let title = item.product.name
@@ -56,4 +81,12 @@ const itemTotal = computed(() => {
   const total = item.amount
   return total.toFixed(2)
 })
+
+const togleItemStatus = (itemId: number) => {
+  emit('toggle-item-status', itemId)
+}
+
+const togglePaidStatus = (itemId: number) => {
+  emit('toggle-item-paid-status', itemId)
+}
 </script>

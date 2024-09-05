@@ -8,7 +8,9 @@
     </button>
     <button
       @click="completeOrder"
+      :disabled="!allowCompleteOrder"
       class="w-full text-lg p-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+      :class="{ 'opacity-50': !allowCompleteOrder }"
     >
       Complete Order
     </button>
@@ -17,6 +19,11 @@
 
 <script lang="ts" setup>
 const emit = defineEmits(['open-modal', 'complete-order'])
+
+const { allowCompleteOrder } = defineProps<{
+  allowCompleteOrder: boolean
+}>()
+console.log('🚀 ~ allowCompleteOrder:', allowCompleteOrder)
 
 const openModal = () => {
   emit('open-modal')

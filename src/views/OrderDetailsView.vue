@@ -13,7 +13,7 @@
         </div>
         <div class="mt-2 flex items-center justify-between text-sm text-gray-500">
           <p>Created at: {{ formatTime(orderDetails.orderTime) }}</p>
-          <p>Updated at: {{ formatTime(orderDetails.lastOrderTime) }}</p>
+          <p>Last order at: {{ formatTime(orderDetails.lastOrderTime) }}</p>
         </div>
       </div>
 
@@ -21,7 +21,13 @@
       <div class="px-6 pt-4">
         <h2 class="text-lg font-semibold text-gray-900 mb-1">Order Items</h2>
         <ul v-if="orderItems.length > 0" class="space-y-3">
-          <OrderItem v-for="item in orderItems" :key="item.id" :item="item" />
+          <OrderItem
+            v-for="item in orderItems"
+            :key="item.id"
+            :item="item"
+            @toggle-item-status="toggleItemStatus"
+            @toggle-item-paid-status="toggleItemPaidStatus"
+          />
         </ul>
         <div v-else class="text-center text-gray-500 text-sm p-2 bg-gray-100 rounded-lg">No items found</div>
       </div>
@@ -36,7 +42,7 @@
       <div class="text-center">...loading</div>
     </div>
 
-    <OrderBottomActions @open-modal="openModal" />
+    <OrderBottomActions @open-modal="openModal" :allowCompleteOrder="allowCompleteOrder" />
 
     <!-- Add Item Modal -->
     <Teleport to="body">
@@ -51,7 +57,13 @@ import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import type { Order, OrderItemType } from '../types/orderTypes'
 import type { ProductItemDb } from '../types/productTypes'
-import { FETCH_ORDER_DETAILS, FETCH_ORDER_ITEMS, ADD_ITEMS_TO_ORDER } from '../store/store'
+import {
+  FETCH_ORDER_DETAILS,
+  FETCH_ORDER_ITEMS,
+  ADD_ITEMS_TO_ORDER,
+  TOGGLE_ITEM_PAID_STATUS,
+  TOGGLE_ITEM_STATUS
+} from '../store/store'
 import { formatTime } from '../utils/dates'
 import OrderItem from '../components/orders/OrderItem.vue'
 import OrderBottomActions from '../components/orders/OrderBottomActions.vue'
@@ -65,13 +77,6 @@ const newItem = ref({ name: '', price: 0 })
 
 const orderDetails = computed<Order | null>(() => store.state.orderDetails)
 const orderItems = computed<OrderItemType[]>(() => store.state.orderDetails.items)
-
-const orderStatus = computed<string>(() => {
-  if (orderDetails.value?.status === 'pending') return 'Active'
-  if (orderDetails.value?.status === 'completed') return 'Completed'
-  if (orderDetails.value?.status === 'cancelled') return 'Cancelled'
-  return 'Unknown'
-})
 
 onMounted(async () => {
   const orderId = parseInt(route.params.orderId as string)
@@ -95,6 +100,31 @@ const statusClasses = computed(() => {
   }
 })
 
+const orderStatus = computed<string>(() => {
+  if (orderDetails.value?.status === 'pending') return 'Active'
+  if (orderDetails.value?.status === 'completed') return 'Completed'
+  if (orderDetails.value?.status === 'cancelled') return 'Cancelled'
+  return 'Unknown'
+})
+
+const allowCompleteOrder = computed(() => {
+  let allowed = true
+
+  if (!orderDetails.value || !orderItems.value) return false
+
+  for (let i = 0; i < orderItems.value.length; i++) {
+    if (orderItems.value[i].status === 'pending') {
+      allowed = false
+      break
+    } else if (!orderItems.value[i].paid) {
+      allowed = false
+      break
+    }
+  }
+
+  return allowed
+})
+
 // const completeOrder = () => {
 //   // store.dispatch(COMPLETE_ORDER, order.value.id)
 //   // order.value.status = 'Completed'
@@ -115,11 +145,13 @@ const statusClasses = computed(() => {
 //   // }OrderItemType
 // }
 
-// const togglePaidStatus = (item) => {
-//   // item.paid = !item.paid
-//   // order.value.updatedAt = new Date()
-//   // closeDropdown(item.id)
-// }
+const toggleItemPaidStatus = (itemId: number) => {
+  store.dispatch(TOGGLE_ITEM_PAID_STATUS, itemId)
+}
+
+const toggleItemStatus = (itemId: number) => {
+  store.dispatch(TOGGLE_ITEM_STATUS, itemId)
+}
 
 // const completeItem = (item) => {
 //   // Implement the logic for marking an item as completed

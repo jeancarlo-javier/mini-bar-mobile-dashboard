@@ -9,7 +9,7 @@
 
     <div class="mt-2 flex items-center justify-between text-sm text-gray-500">
       <p>Created at: {{ formatTime(order.orderTime) }}</p>
-      <p>Updated at: {{ formatTime(order.lastOrderTime) }}</p>
+      <p>Last order at: {{ formatTime(order.lastOrderTime) }}</p>
     </div>
 
     <div class="border-t border-gray-200 my-2"></div>
