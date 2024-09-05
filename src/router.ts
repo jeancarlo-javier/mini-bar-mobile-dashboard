@@ -3,8 +3,8 @@ import { isAuthenticated } from './utils/auth'
 import { NavigationGuardNext, RouteLocationNormalizedLoadedGeneric, RouteLocationNormalizedGeneric } from 'vue-router'
 
 const redirectIfNotAuthenticated = (
-  to: RouteLocationNormalizedLoadedGeneric,
-  from: RouteLocationNormalizedGeneric,
+  _: RouteLocationNormalizedLoadedGeneric,
+  __: RouteLocationNormalizedGeneric,
   next: NavigationGuardNext
 ) => {
   if (!isAuthenticated()) {
@@ -27,7 +27,7 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('./views/LoginView.vue'),
-      beforeEnter: (to, from, next) => {
+      beforeEnter: (_, __, next) => {
         if (isAuthenticated()) {
           next({ name: 'home' })
         } else {
