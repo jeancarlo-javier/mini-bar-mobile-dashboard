@@ -4,26 +4,26 @@
       <div class="flex justify-between items-center p-3 bg-gray-100">
         <span class="text-lg font-medium text-gray-900">{{ itemTitle }}</span>
         <div class="flex items-center space-x-2">
-          <span class="text-sm text-gray-500 px-2 py-1 bg-blue-100 rounded-full shadow-sm">{{ formatedTime }}</span>
-          <span class="text-sm text-gray-500 px-2 py-1 bg-green-100 rounded-full shadow-sm">S./ {{ itemTotal }}</span>
+          <span class="text-sm text-gray-500 px-2 py-1 bg-white rounded-full shadow-sm">{{ formatedTime }}</span>
+          <span class="text-sm text-gray-500 px-2 py-1 bg-white rounded-full shadow-sm">S./ {{ itemTotal }}</span>
         </div>
       </div>
       <div>
         <div class="flex gap-3 p-3">
           <button type="button">
-            <Trash class="w-5 h-5 text-red-400" stroke-width="3px" />
+            <Trash class="w-5 h-5 text-red-400" stroke-width="2px" />
           </button>
           <button
             type="button"
-            class="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            class="flex-1 px-4 py-2 border border-green-400 rounded-md text-sm font-medium text-green-400 hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
-            Mark as Paid
+            Mark as paid
           </button>
           <button
             type="submit"
-            class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            class="flex-1 px-4 py-2 border border-amber-400 text-amber-400 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
           >
-            Complete
+            Pending
           </button>
         </div>
       </div>
