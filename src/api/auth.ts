@@ -8,7 +8,7 @@ interface LoginParams {
 export async function login({ email, password }: LoginParams): Promise<void> {
   try {
     const response = await axios.post(
-      'http://127.0.0.1:8000/login',
+      '/api/login',
       new URLSearchParams({
         grant_type: 'password',
         username: email,
